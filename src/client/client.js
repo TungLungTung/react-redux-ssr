@@ -16,10 +16,18 @@ import { renderRoutes } from 'react-router-config';
 /// Reducers
 import reducers from './reducers';
 
+// Axios
+import axios from 'axios';
+
+/// Create instance Axios instance
+const axiosInstance = axios.create({
+  baseURL: '/api'
+});
+
 const store = createStore(
   reducers,
-  window.app_initial_state || {},
-  applyMiddleware(thunk)
+  window.INITIAL_STATE || {},
+  applyMiddleware(thunk.withExtraArgument(axiosInstance))
 );
 
 ReactDOM.hydrate(

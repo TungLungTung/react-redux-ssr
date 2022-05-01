@@ -37,5 +37,7 @@ function loadData(store) {
 }
 /// Khong dung mapStateToProps de add action creators vao
 
-export { loadData };
-export default connect(mapStateToProps, { fetchUsers })(UsersList);
+export default {
+  loadData,
+  component: connect(mapStateToProps, { fetchUsers })(UsersList)
+};

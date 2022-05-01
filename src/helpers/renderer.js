@@ -2,6 +2,7 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import serialize from 'serialize-javascript';
 import Routes from '../client/Routes';
 
 //// React Route Config
@@ -18,14 +19,16 @@ export default (req, store) => {
   );
   return `<html>
     <head>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    </head>
       <body>
         <script>
-          var app_initial_state = ${JSON.stringify(store.getState())};
+          window.INITIAL_STATE = ${serialize(store.getState())}
         </script>
         <div id="root">${content}</div>
         <script src="bundle.js"></script>
       </body>
-    </head>
   </html>`;
 };
 

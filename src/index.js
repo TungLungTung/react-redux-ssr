@@ -4,7 +4,7 @@ import express from 'express';
 import { matchRoutes } from 'react-router-config';
 import Routes from './client/Routes';
 import renderer from './helpers/renderer';
-
+import proxy from 'express-http-proxy';
 import createStore from './helpers/createStore';
 
 // /// ES2015 modules work nicely with CommonJS
@@ -15,11 +15,23 @@ import createStore from './helpers/createStore';
 
 const app = express();
 
+/// Setup proxy here (Proxy inside Renderer API)
+/// Neu access to route /api, auto send of to domain
+app.use(
+  '/api',
+  proxy('http://react-ssr-api.herokuapp.com', {
+    proxyReqOptDecorator(opts) {
+      opts.headers['x-forwarded-host'] = 'localhost:3000';
+      return opts;
+    }
+  })
+);
+
 /// Tell express that it need to treat that public directory as a static
 app.use(express.static('public'));
 
 app.get('*', (req, res) => {
-  const store = createStore();
+  const store = createStore(req);
   /// Render as string and send to some HTML
   /// Some logic to initialize and load data in store
 
