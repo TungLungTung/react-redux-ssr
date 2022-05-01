@@ -1,5 +1,8 @@
 import 'babel-polyfill';
 import express from 'express';
+/// React Router Config
+import { matchRoutes } from 'react-router-config';
+import Routes from './client/Routes';
 import renderer from './helpers/renderer';
 
 import createStore from './helpers/createStore';
@@ -17,10 +20,21 @@ app.use(express.static('public'));
 
 app.get('*', (req, res) => {
   const store = createStore();
-
   /// Render as string and send to some HTML
   /// Some logic to initialize and load data in store
-  res.send(renderer(req, store)); // send back to user
+
+  /// Neu route nao match voi cai path thi call loadData() lien
+  /// Return arrays of promises
+  const promises = matchRoutes(Routes, req.path).map(({ route }) => {
+    /// Tuy nhien co mot so route se khong co loadData.
+    /// Promise <pending>
+    return route.loadData ? route.loadData(store) : null;
+  });
+
+  Promise.all(promises).then(() => {
+    // Send back to client
+    res.send(renderer(req, store));
+  });
 });
 
 app.listen(3000, () => {
