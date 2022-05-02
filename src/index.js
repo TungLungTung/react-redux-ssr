@@ -37,15 +37,35 @@ app.get('*', (req, res) => {
 
   /// Neu route nao match voi cai path thi call loadData() lien
   /// Return arrays of promises
-  const promises = matchRoutes(Routes, req.path).map(({ route }) => {
-    /// Tuy nhien co mot so route se khong co loadData.
-    /// Promise <pending>
-    return route.loadData ? route.loadData(store) : null;
-  });
+  const promises = matchRoutes(Routes, req.path)
+    .map(({ route }) => {
+      /// Tuy nhien co mot so route se khong co loadData.
+      /// Promise <pending>
+      return route.loadData ? route.loadData(store) : null;
+    })
+    .map((promise) => {
+      if (promise) {
+        return new Promise((resolve, reject) => {
+          promise.then(resolve).catch(resolve);
+        });
+      }
+    });
 
   Promise.all(promises).then(() => {
+    /// Context object
+    const context = {};
+    const content = renderer(req, store, context);
+
+    if (context.url) {
+      return res.redirect(301, context.url);
+    }
+
+    if (context.notFound) {
+      res.status(404);
+    }
+
     // Send back to client
-    res.send(renderer(req, store));
+    res.send(content);
   });
 });
 

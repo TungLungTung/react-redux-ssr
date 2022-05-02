@@ -19,7 +19,7 @@ const Header = ({ auth }) => {
         </Link>
         <ul className="right">
           <li>
-            <Link to="/user">Users</Link>
+            <Link to="/users">Users</Link>
           </li>
           <li>
             <Link to="/admins">Admins</Link>

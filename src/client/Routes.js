@@ -3,6 +3,8 @@ import { Route } from 'react-router-dom';
 import App from './App';
 import HomePage from './pages/HomePage';
 import UsersListPage from './pages/UsersListPage';
+import NotFoundPage from './pages/NotFoundPage';
+import AdminsListPage from './pages/AdminsListPage';
 
 /// with React Route Config
 export default [
@@ -18,6 +20,13 @@ export default [
       {
         ...UsersListPage,
         path: '/users'
+      },
+      {
+        ...AdminsListPage,
+        path: '/admins'
+      },
+      {
+        ...NotFoundPage
       }
     ]
   }
